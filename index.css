@@ -1,0 +1,57 @@
+:root{
+  --clr: white;
+  --btn-bg-clr: rgba(50,50,50,0.8);
+  --btn-bg-hov-clr: rgba(40,40,40,0.8);
+  --btn-bg-act-clr: rgba(30,30,30,0.8);
+}
+*{
+  font-family: 'Montserrat', sans-serif;
+  user-select: none;
+  color: var(--clr);
+}
+html, body {
+  width:100%;
+  height:100%;
+  margin:0;
+  padding:0;
+  background-color: black;
+}
+#canvas {
+  display:block;
+  width: 100%;
+  height: 100%;
+  cursor: crosshair;
+}
+#topright{
+  z-index: 1;
+  position: absolute;
+  right:0;
+  top: 0;
+  font-size: 0;
+}
+
+#levelnum{
+  font-size: 24px;
+}
+img{
+  display: none;
+  width: 1000%;
+}
+button{
+  background-color: var(--btn-bg-clr);
+  color: var(--clr);
+  border: 0;
+  padding: 10px 16px;
+  margin:0;
+  outline: 0;
+  cursor: pointer;
+  display: inline;
+  font-size: 14px;
+  transition: background 0.25s, color 0.25s;
+}
+button:hover{
+  background-color: var(--btn-bg-hov-clr);
+}
+button:active{
+  background-color: var(--btn-bg-act-clr);
+}
