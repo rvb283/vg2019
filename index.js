@@ -36,13 +36,15 @@ $(function(){
   }
 
   let thislevel;
+  let levelMessageTimeout;
   function loadLevel(){
+    clearTimeout(levelMessageTimeout);
     thislevel = levels[level-1];
     enemyArray = [];
     lasers = [];
     player.rpos();
     displayLevel = true;
-    setTimeout(function(){
+    levelMessageTimeout = setTimeout(function(){
       displayLevel = false;
       if(typeof thislevel != "undefined"){
         if("enemies" in thislevel){
