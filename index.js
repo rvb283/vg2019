@@ -12,7 +12,8 @@ $(function(){
   let levels = [
     {enemies:[{x:canvas.width, y:canvas.height/2-enemySize/2}]},
     {enemies:[{x:0, y:0},{x:0, y:canvas.height/2-enemySize/2},{x:0, y:canvas.height-enemySize}]},
-    {enemies:[{x:0, y:0},{x:canvas.width-enemySize, y:0},{x:0, y:canvas.height-enemySize},{x:canvas.width-enemySize, y:canvas.height-enemySize},{x:canvas.width/2-enemySize/2, y:0},{x:canvas.width/2-enemySize/2, y:canvas.height-enemySize}]}
+    {enemies:[{x:0, y:0},{x:canvas.width-enemySize, y:0},{x:0, y:canvas.height-enemySize},{x:canvas.width-enemySize, y:canvas.height-enemySize},{x:canvas.width/2-enemySize/2, y:0},{x:canvas.width/2-enemySize/2, y:canvas.height-enemySize}]},
+    {enemies:[{x:0, y:0},{x:canvas.width-enemySize, y:0},{x:0, y:canvas.height-enemySize},{x:canvas.width-enemySize, y:canvas.height-enemySize},{x:canvas.width/2-enemySize/2, y:0},{x:canvas.width/2-enemySize/2, y:canvas.height-enemySize},{x:0, y:canvas.height/2-enemySize/2},{x:canvas.width-player.size, y:canvas.height/2-enemySize/2}]}
   ];
   let endlevel = [{}];
   let enemyArray = [];
@@ -24,6 +25,9 @@ $(function(){
   let fireLaser = false;
   let paused = false;
 
+  let gameState = "";
+  const MENU = 1;
+  const LEVELDISPLAY = 2;
 
   function init(){
       level=1;
@@ -450,7 +454,7 @@ $(function(){
       } else if(typeof thislevel == "undefined"){
         ctx.font = "100px arial";
         ctx.textAlign = "center";
-        ctx.fillStyle = "hsl("+((t/5) % 361)+", 100%, 50%)";
+        ctx.fillStyle = "hsl("+((t/2) % 361)+", 100%, 50%)";
         ctx.fillText("You Win!",canvas.width/2,canvas.height/4);
       }
     }
