@@ -5,7 +5,7 @@ $(function(){
   ctx.imageSmoothingEnabled = false;
 
   let keys = {up: 87, down: 83, left: 65, right: 68, upk: 38, downk: 40, leftk: 37, rightk:39};
-  let player = {x: 0, y: 0, rpos: function(){this.x = canvas.width/2-this.size/2; this.y = canvas.height/2-this.size/2; return this}, size:100, color:"white", speed: 20, get dSpeed(){return player.speed*(Math.sqrt(0.5));}, moveUp: false, moveDown: false, moveLeft: false, moveRight: false};
+  let player = {x: 0, y: 0, rpos: function(){this.x = canvas.width/2-this.size/2; this.y = canvas.height/2-this.size/2; return this}, size:100, color:"white", speed: 10, get dSpeed(){return player.speed*(Math.sqrt(0.5));}, moveUp: false, moveDown: false, moveLeft: false, moveRight: false};
   let hborders = [{x1:0,x2:canvas.width,y:0, render:false},{x1:0,x2:canvas.width,y:canvas.height, render:true}];
   let vborders = [{y1:0,y2:canvas.height,x:0, render:false},{y1:0,y2:canvas.height,x:canvas.width, render:true}];
   const enemySize = 100;
@@ -13,22 +13,25 @@ $(function(){
     {enemies:[{x:canvas.width, y:canvas.height/2-enemySize/2}]},
     {enemies:[{x:0, y:0},{x:0, y:canvas.height/2-enemySize/2},{x:0, y:canvas.height-enemySize}]},
     {enemies:[{x:0, y:0},{x:canvas.width-enemySize, y:0},{x:0, y:canvas.height-enemySize},{x:canvas.width-enemySize, y:canvas.height-enemySize},{x:canvas.width/2-enemySize/2, y:0},{x:canvas.width/2-enemySize/2, y:canvas.height-enemySize}]},
-    {enemies:[{x:0, y:0},{x:canvas.width-enemySize, y:0},{x:0, y:canvas.height-enemySize},{x:canvas.width-enemySize, y:canvas.height-enemySize},{x:canvas.width/2-enemySize/2, y:0},{x:canvas.width/2-enemySize/2, y:canvas.height-enemySize},{x:0, y:canvas.height/2-enemySize/2},{x:canvas.width-player.size, y:canvas.height/2-enemySize/2}]}
+    {enemies:[{x:0, y:0},{x:canvas.width-enemySize, y:0},{x:0, y:canvas.height-enemySize},{x:canvas.width-enemySize, y:canvas.height-enemySize},{x:canvas.width/2-enemySize/2, y:0},{x:canvas.width/2-enemySize/2, y:canvas.height-enemySize},{x:0, y:canvas.height/2-enemySize/2},{x:canvas.width-player.size, y:canvas.height/2-enemySize/2}]},
+    {enemies:[{x:0, y:0},{x:canvas.width-enemySize, y:0},{x:0, y:canvas.height-enemySize},{x:canvas.width-enemySize, y:canvas.height-enemySize},{x:canvas.width/2-enemySize/2, y:0},{x:canvas.width/2-enemySize/2, y:canvas.height-enemySize},{x:0, y:canvas.height/2-enemySize/2},{x:canvas.width-player.size, y:canvas.height/2-enemySize/2},{x:200, y:200},{x:canvas.width-enemySize-50, y:0-200},{x:0+200, y:canvas.height-enemySize-200},{x:canvas.width-enemySize-200, y:canvas.height-enemySize-200},{x:canvas.width/2-enemySize/2+200, y:0+200},{x:canvas.width/2-enemySize/2, y:canvas.height-enemySize+200},{x:0+200, y:canvas.height/2-enemySize/2},{x:canvas.width-player.size-200, y:canvas.height/2-enemySize/2}]}
   ];
+  const enemySpeed = 10;
   let endlevel = [{}];
   let enemyArray = [];
   let lasers = [];
   const laserWidth = 100;
   const laserHeight = 10;
-  const laserSpeed = 25;
+  const laserSpeed = 20;
   let level = 1;
   let fireLaser = false;
-  let paused = false;
 
-  let gameState = "";
   const MENU = 1;
   const LEVELDISPLAY = 2;
-
+  const ONLEVEL = 3;
+  const PAUSED = 4;
+  let gameState = MENU;
+  let beforePausedState;
   function init(){
       level=1;
       enemyArray = [];
@@ -47,9 +50,9 @@ $(function(){
     enemyArray = [];
     lasers = [];
     player.rpos();
-    displayLevel = true;
+    gameState = LEVELDISPLAY;
     levelMessageTimeout = setTimeout(function(){
-      displayLevel = false;
+      gameState = ONLEVEL;
       if(typeof thislevel != "undefined"){
         if("enemies" in thislevel){
             enemyArray = JSON.parse(JSON.stringify(thislevel.enemies));
@@ -64,7 +67,6 @@ $(function(){
     rect(instance.x, instance.y, enemySize, enemySize, "white");
   }
 
-  const speed = 5;
   function updateEnemyPos(instance){
     let targetPlayerX = player.x;
     let targetPlayerY = player.y;
@@ -74,8 +76,8 @@ $(function(){
     let moveAngle = Math.atan2(yFromPlayer, xFromPlayer);
 
     // if(distanceFromPlayer >= speed){
-      instance.x += Math.cos(moveAngle) * speed;
-      instance.y += Math.sin(moveAngle) * speed;
+      instance.x += Math.cos(moveAngle) * enemySpeed;
+      instance.y += Math.sin(moveAngle) * enemySpeed;
     // }
   }
   function enemyIntersectPlayer(instance){
@@ -214,8 +216,8 @@ $(function(){
       level++;
       loadLevel();
     }
-    if(paused){
-      pause();
+    if(gameState == PAUSED){
+      gameState = beforePausedState;
     }
   }
 
@@ -225,22 +227,37 @@ $(function(){
       level--;
       loadLevel();
     }
-    if(paused){
-      pause();
+    if(gameState == PAUSED){
+      gameState = beforePausedState;
     }
   });
   $("#pause").click(pause);
   $("#reset").click(function(){
     init();
-    if(paused){
-      pause();
+    if(gameState == PAUSED){
+      gameState = beforePausedState;
     }
   });
   $("#redo").click(function(){
     loadLevel();
-    if(paused){
-      pause();
+    if(gameState == PAUSED){
+      gameState = beforePausedState;
     }
+  });
+
+  $("#play").click(function(){
+    gameState = LEVELDISPLAY;
+    init();
+  });
+
+  $("#resume").click(function(){
+    if(gameState === PAUSED){
+      $("#pause").trigger("click");
+    }
+  });
+
+  $("#gotomenu").click(function(){
+    gameState = MENU;
   });
 
   function rect(x, y, width, height, color, rotation=false){
@@ -253,15 +270,23 @@ $(function(){
   }
 
   function pause(){
-    paused = !paused;
-    if(paused){
-    rect(0,0,canvas.width,canvas.height,"rgba(0,0,0,0.75)");
+    if(gameState !== PAUSED && gameState !== MENU){
+      beforePausedState = gameState;
+      gameState = PAUSED;
+      clearTimeout(levelMessageTimeout);
+      rect(0,0,canvas.width,canvas.height,"rgba(0,0,0,0.75)");
       ctx.font = "100px arial";
       ctx.fillStyle = "rgba(255,255,255,1)";
       ctx.textAlign = "center";
-      ctx.fillText("Paused",canvas.width/2,canvas.height/2);
+      ctx.fillText("Paused",canvas.width/2,canvas.height/5);
+      $("#pause").text("Resume");
+    } else if(gameState === PAUSED){
+      if(beforePausedState === LEVELDISPLAY){
+        loadLevel();
+      }
+      gameState = beforePausedState;
+      $("#pause").text("Pause");
     }
-    $("#pause").text(paused?"Continue":"Pause");
   }
 
   $(document).keypress(function(e){
@@ -336,7 +361,12 @@ $(function(){
   let laserTime = 0;
   //Game Loop
   function loop(t){
-    if(!paused){
+    console.log(gameState);
+    if(gameState === ONLEVEL || gameState === LEVELDISPLAY){
+      $("#pause").text("Pause");
+      $("#pausemenu").hide();
+      $("#topright").show();
+      $("#menu").hide();
       //Background
       rect(0, 0, canvas.width, canvas.height, "black");
 
@@ -417,7 +447,7 @@ $(function(){
       // rect(player.x, player.y, player.size, player.size, player.color);
       ctx.drawImage($("#player")[0], player.x, player.y, player.size, player.size)
 
-      if(!enemyArray.length && !displayLevel){
+      if(!enemyArray.length && gameState !== LEVELDISPLAY){
         nextLevel();
       }
       enemyArray.forEach(updateEnemyPos);
@@ -445,8 +475,7 @@ $(function(){
           loadLevel();
         }
       });
-
-      if(displayLevel && typeof thislevel != "undefined"){
+      if(gameState === LEVELDISPLAY && typeof thislevel != "undefined"){
         ctx.font = "100px arial";
         ctx.textAlign = "center";
         ctx.fillStyle = "rgb(255, 255, 255)";
@@ -457,10 +486,20 @@ $(function(){
         ctx.fillStyle = "hsl("+((t/2) % 361)+", 100%, 50%)";
         ctx.fillText("You Win!",canvas.width/2,canvas.height/4);
       }
+    }  else if(gameState == MENU){
+      $("#menu").show();
+      $("#pausemenu").hide();
+      $("#topright").hide();
+      $("#pause").text("Pause");
+      rect(0, 0, canvas.width, canvas.height, "black");
+      ctx.font = "150px arial";
+      ctx.fillStyle = "rgba(255,255,255,1)";
+      ctx.textAlign = "center";
+      ctx.fillText("Game Title",canvas.width/2,canvas.height/4);
+    } else if(gameState == PAUSED){
+      $("#pausemenu").show();
     }
-
     window.requestAnimationFrame(loop);
   }
-  init();
   window.requestAnimationFrame(loop);
 });

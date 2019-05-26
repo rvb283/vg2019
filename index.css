@@ -40,13 +40,10 @@ img{
 button{
   background-color: var(--btn-bg-clr);
   color: var(--clr);
+  cursor: pointer;
   border: 0;
-  padding: 10px 16px;
   margin:0;
   outline: 0;
-  cursor: pointer;
-  display: inline;
-  font-size: 14px;
   transition: background 0.25s, color 0.25s;
 }
 button:hover{
@@ -54,4 +51,29 @@ button:hover{
 }
 button:active{
   background-color: var(--btn-bg-act-clr);
+}
+#topright button{
+  padding: 14px 18px;
+  display: inline;
+  font-size: 18px;
+}
+#menu, #pausemenu{
+  position: absolute;
+  width: 33%;
+  top: 50%;
+  left: 50%;
+  font-size: 0;
+  transform: translate(-50%,-50%);
+}
+#menu button, #pausemenu button{
+  display: block;
+  font-size: 22px;
+  width: 100%;
+  padding: 20px;
+  /* margin-top: 5px; */
+  transition: background 0.25s, color 0.25s, padding 0.25s, font-size 0.25s;
+}
+#menu button:hover, #pausemenu button:hover{
+  font-size: 32px;
+  padding: 28px;
 }
