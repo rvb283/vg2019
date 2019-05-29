@@ -1,5 +1,8 @@
 :root{
-  --clr: white;
+  --clr: rgb(255,255,255);
+  --hov-clr: rgb(215,215,215);
+  --act-clr: rgb(175,175,175);
+  --bg-clr: rgba(50,50,50,1);
   --btn-bg-clr: rgba(50,50,50,0.8);
   --btn-bg-hov-clr: rgba(40,40,40,0.8);
   --btn-bg-act-clr: rgba(30,30,30,0.8);
@@ -60,10 +63,13 @@ button:active{
 #menu, #pausemenu{
   position: absolute;
   width: 33%;
-  top: 50%;
+  top: 60%;
   left: 50%;
   font-size: 0;
   transform: translate(-50%,-50%);
+}
+#pausemenu{
+  top: 50%;
 }
 #menu button, #pausemenu button{
   display: block;
@@ -76,4 +82,41 @@ button:active{
 #menu button:hover, #pausemenu button:hover{
   font-size: 32px;
   padding: 28px;
+}
+#modal{
+  background-color: var(--bg-clr);
+  color: var(--clr);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+  width:50%;
+  max-height: 100%;
+  min-height: 100px;
+  overflow: visible;
+  position: absolute;
+  z-index: 2;
+  display: none;
+}
+#modalclose{
+  color: var(--clr);
+  background-color: transparent;
+  right:0;
+  top:0;
+  font-size: 36px;
+  position: absolute;
+  transition: color 0.25s;
+}
+#modalclose:hover{
+  color: var(--hov-clr);
+}
+#modalclose:active{
+  color: var(--act-clr);
+}
+#modal .title{
+  margin: 10px;
+  font-size: 36px;
+}
+#modal .content{
+  margin: 10px;
+  font-size: 24px;
 }

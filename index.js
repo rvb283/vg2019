@@ -64,7 +64,8 @@ $(function(){
   }
 
   function enemy(instance){
-    rect(instance.x, instance.y, enemySize, enemySize, "white");
+    // rect(instance.x, instance.y, enemySize, enemySize, "white");
+    ctx.drawImage($("#enemy")[0], instance.x-enemySize*2.5, instance.y-enemySize*2.5, enemySize*6, enemySize*6);
   }
 
   function updateEnemyPos(instance){
@@ -260,6 +261,36 @@ $(function(){
     gameState = MENU;
   });
 
+  $("#modalclose").click(function(){
+    $("#modal").hide("fast");
+  });
+
+  $("#controls").click(function(){
+    openModal("Controls",`
+    <ul>
+      <li>WASD/arrow keys keys to move</li>
+      <li>Click and aim to shoot</li>
+      <li>P to pause</li>
+    </ul>`);
+  });
+
+  $("#credits").click(function(){
+    openModal("Credits",`
+    <ul>
+      <li>Coding - Garrett</li>
+      <li>Graphics - Kai</li>
+      <li>? - Aadithya</li>
+      <li>Game tester - Ashan</li>
+      <li>Storyboard - Hana</li>
+    </ul>`)
+  });
+
+  function openModal(title, content){
+    $("#modal").show("fast");
+    $("#modal").children(".title").text(title);
+    $("#modal").children(".content").html(content);
+  }
+
   function rect(x, y, width, height, color, rotation=false){
     if(rotation || rotation <= 0)
       ctx.rotate(rotation);
@@ -298,15 +329,19 @@ $(function(){
   $(document).keydown(function(e){
     switch(e.which){
       case keys.up:
+      case keys.upk:
         player.moveUp = true;
         break;
       case keys.down:
+      case keys.downk:
         player.moveDown = true;
         break;
       case keys.left:
+      case keys.leftk:
         player.moveLeft = true;
         break;
       case keys.right:
+      case keys.rightk:
         player.moveRight = true;
         break;
     }
@@ -314,15 +349,19 @@ $(function(){
   $(document).keyup(function(e){
     switch(e.which){
       case keys.up:
+      case keys.upk:
         player.moveUp = false;
         break;
       case keys.down:
+      case keys.downk:
         player.moveDown = false;
         break;
       case keys.left:
+      case keys.leftk:
         player.moveLeft = false;
         break;
       case keys.right:
+      case keys.rightk:
         player.moveRight = false;
         break;
     }
@@ -368,10 +407,10 @@ $(function(){
       $("#topright").show();
       $("#menu").hide();
       //Background
+      previousPlayerY = player.y;
       rect(0, 0, canvas.width, canvas.height, "black");
 
       previousPlayerX = player.x;
-      previousPlayerY = player.y;
       let accuracy = 25;
       if(player.moveUp){
         for(j = 0; j < accuracy; j++){
