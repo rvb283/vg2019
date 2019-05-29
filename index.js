@@ -279,8 +279,8 @@ $(function(){
     <ul>
       <li>Coding - Garrett</li>
       <li>Graphics - Kai</li>
-      <li>? - Aadithya</li>
-      <li>Game tester - Ashan</li>
+      <li>Documentation/Testing - Aadithya</li>
+      <li>Game Testing - Ashan</li>
       <li>Storyboard - Hana</li>
     </ul>`)
   });
@@ -400,7 +400,6 @@ $(function(){
   let laserTime = 0;
   //Game Loop
   function loop(t){
-    console.log(gameState);
     if(gameState === ONLEVEL || gameState === LEVELDISPLAY){
       $("#pause").text("Pause");
       $("#pausemenu").hide();
@@ -408,7 +407,8 @@ $(function(){
       $("#menu").hide();
       //Background
       previousPlayerY = player.y;
-      rect(0, 0, canvas.width, canvas.height, "black");
+      // rect(0, 0, canvas.width, canvas.height, "black");
+      ctx.drawImage($("#background")[0], 0, 0, canvas.width, canvas.height)
 
       previousPlayerX = player.x;
       let accuracy = 25;
@@ -530,11 +530,11 @@ $(function(){
       $("#pausemenu").hide();
       $("#topright").hide();
       $("#pause").text("Pause");
-      rect(0, 0, canvas.width, canvas.height, "black");
+      ctx.drawImage($("#background")[0], 0, 0, canvas.width, canvas.height)
       ctx.font = "150px arial";
       ctx.fillStyle = "rgba(255,255,255,1)";
       ctx.textAlign = "center";
-      ctx.fillText("Game Title",canvas.width/2,canvas.height/4);
+      ctx.fillText("StarPixel",canvas.width/2,canvas.height/4);
     } else if(gameState == PAUSED){
       $("#pausemenu").show();
     }
