@@ -32,6 +32,11 @@ $(function(){
   const PAUSED = 4;
   let gameState = MENU;
   let beforePausedState;
+  
+  setTimeout(function(){
+      $("video").hide();   
+  }, 1000*60);
+  
   function init(){
       level=1;
       enemyArray = [];
