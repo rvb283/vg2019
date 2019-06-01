@@ -34,7 +34,7 @@ $(function(){
   let beforePausedState;
   
   setTimeout(function(){
-    $("#video").play();
+    $("#video")[0].play();
   }, 1000);
   setTimeout(function(){
       $("#video").hide();   
