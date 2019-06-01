@@ -9,7 +9,13 @@ $(function(){
   let hborders = [{x1:0,x2:canvas.width,y:0, render:false},{x1:0,x2:canvas.width,y:canvas.height, render:true}];
   let vborders = [{y1:0,y2:canvas.height,x:0, render:false},{y1:0,y2:canvas.height,x:canvas.width, render:true}];
   const enemySize = 100;
-  let levels = [{},{},{},{},{},{},{boss:true}];
+  let levels = [
+    {enemies:[{x:canvas.width, y:canvas.height/2-enemySize/2}]},
+    {enemies:[{x:0, y:0},{x:0, y:canvas.height/2-enemySize/2},{x:0, y:canvas.height-enemySize}]},
+    {enemies:[{x:0, y:0},{x:canvas.width-enemySize, y:0},{x:0, y:canvas.height-enemySize},{x:canvas.width-enemySize, y:canvas.height-enemySize},{x:canvas.width/2-enemySize/2, y:0},{x:canvas.width/2-enemySize/2, y:canvas.height-enemySize}]},
+    {enemies:[{x:0, y:0},{x:canvas.width-enemySize, y:0},{x:0, y:canvas.height-enemySize},{x:canvas.width-enemySize, y:canvas.height-enemySize},{x:canvas.width/2-enemySize/2, y:0},{x:canvas.width/2-enemySize/2, y:canvas.height-enemySize},{x:0, y:canvas.height/2-enemySize/2},{x:canvas.width-player.size, y:canvas.height/2-enemySize/2}]},
+    {enemies:[{x:0, y:0},{x:canvas.width-enemySize, y:0},{x:0, y:canvas.height-enemySize},{x:canvas.width-enemySize, y:canvas.height-enemySize},{x:canvas.width/2-enemySize/2, y:0},{x:canvas.width/2-enemySize/2, y:canvas.height-enemySize},{x:0, y:canvas.height/2-enemySize/2},{x:canvas.width-player.size, y:canvas.height/2-enemySize/2},{x:200, y:200},{x:canvas.width-enemySize-50, y:0-200},{x:0+200, y:canvas.height-enemySize-200},{x:canvas.width-enemySize-200, y:canvas.height-enemySize-200},{x:canvas.width/2-enemySize/2+200, y:0+200},{x:canvas.width/2-enemySize/2, y:canvas.height-enemySize+200},{x:0+200, y:canvas.height/2-enemySize/2},{x:canvas.width-player.size-200, y:canvas.height/2-enemySize/2}]}
+  ];
   const enemySpeed = 10;
   let endlevel = [{}];
   let enemyArray = [];
@@ -17,12 +23,8 @@ $(function(){
   const laserWidth = 100;
   const laserHeight = 10;
   const laserSpeed = 20;
-  const laserReload = 150;
   let level = 1;
   let fireLaser = false;
-  const levelTime = 30*1000;
-  let levelStart;
-  let levelPauseValue = 0;
 
   const MENU = 1;
   const LEVELDISPLAY = 2;
@@ -34,38 +36,29 @@ $(function(){
       level=1;
       enemyArray = [];
       loadLevel();
+      // hborders.splice(2,hborders.length-2);
+      // vborders.splice(2,vborders.length-2);
+      // hborders.push.apply(hborders, levels[0].h);
+      // vborders.push.apply(vborders, levels[0].v);
   }
 
   let thislevel;
   let levelMessageTimeout;
-  let enemySpawn;
-  let enemySpawnInterval;
-  let levelLength;
   function loadLevel(){
     clearTimeout(levelMessageTimeout);
-    clearTimeout(levelLength);
-    clearInterval(enemySpawnInterval);
     thislevel = levels[level-1];
     enemyArray = [];
     lasers = [];
     player.rpos();
     gameState = LEVELDISPLAY;
-    if(typeof thislevel != "undefined"){
-      levelMessageTimeout = setTimeout(function(){
-        gameState = ONLEVEL;
-        //
-        //   if("enemies" in thislevel){
-        //       enemyArray = JSON.parse(JSON.stringify(thislevel.enemies));
-        //   }
-        // }
-        levelStart = Date.now();
-        levelLength = setTimeout(nextLevel, levelTime);
-        enemySpawnInterval = setInterval(enemySpawnIntervalFunction,1000-(level-1)*100);
-
-      }, 2000);
-    } else {
+    levelMessageTimeout = setTimeout(function(){
       gameState = ONLEVEL;
-    }
+      if(typeof thislevel != "undefined"){
+        if("enemies" in thislevel){
+            enemyArray = JSON.parse(JSON.stringify(thislevel.enemies));
+        }
+      }
+    }, 2000);
     player.moveUp = player.moveDown = player.moveLeft = player.moveRight = false;
     // fireLaser = false;
   }
@@ -73,21 +66,6 @@ $(function(){
   function enemy(instance){
     // rect(instance.x, instance.y, enemySize, enemySize, "white");
     ctx.drawImage($("#enemy")[0], instance.x-enemySize*2.5, instance.y-enemySize*2.5, enemySize*6, enemySize*6);
-  }
-
-  function enemySpawnIntervalFunction(){
-    side = Math.floor(Math.random()*4)+1;
-    let enemyPosition = {};
-    if(side === 1){
-      enemyPosition = {x:Math.random()*canvas.width, y:0-enemySize};
-    } else if(side === 2){
-      enemyPosition = {x:Math.random()*canvas.width, y:canvas.height};
-    } else if(side === 3){
-      enemyPosition = {x:-enemySize, y:Math.random()*canvas.height};
-    } else if(side === 4){
-      enemyPosition = {x:canvas.width, y:Math.random()*canvas.height};
-    }
-    enemyArray.push(enemyPosition);
   }
 
   function updateEnemyPos(instance){
@@ -323,14 +301,10 @@ $(function(){
   }
 
   function pause(){
-    if(gameState !== PAUSED && gameState !== MENU && gameState !== LEVELDISPLAY){
+    if(gameState !== PAUSED && gameState !== MENU){
       beforePausedState = gameState;
       gameState = PAUSED;
       clearTimeout(levelMessageTimeout);
-      clearTimeout(levelLength);
-      clearInterval(enemySpawnInterval);
-      enemySpawnInterval = null;
-      levelPauseValue = Date.now();
       rect(0,0,canvas.width,canvas.height,"rgba(0,0,0,0.75)");
       ctx.font = "100px arial";
       ctx.fillStyle = "rgba(255,255,255,1)";
@@ -338,25 +312,18 @@ $(function(){
       ctx.fillText("Paused",canvas.width/2,canvas.height/5);
       $("#pause").text("Resume");
     } else if(gameState === PAUSED){
-      // if(beforePausedState === LEVELDISPLAY){
-      //   loadLevel();
-      // }
+      if(beforePausedState === LEVELDISPLAY){
+        loadLevel();
+      }
       gameState = beforePausedState;
       $("#pause").text("Pause");
-      clearTimeout(levelLength);
-      console.log(levelPauseValue - levelStart);
-      levelStart = Date.now();
-      levelLength = setTimeout(nextLevel, levelTime - (levelPauseValue - levelStart));
-      enemySpawnInterval = setInterval(enemySpawnIntervalFunction,1000-(level-1)*50);
     }
   }
 
   $(document).keypress(function(e){
     switch(e.key){
       case "p":
-      case "Escape":
         pause();
-        break;
     }
   });
   $(document).keydown(function(e){
@@ -495,7 +462,7 @@ $(function(){
 
       $("#levelnum").text("Level: "+level);
 
-      if(fireLaser && t - laserTime > laserReload){
+      if(fireLaser && t - laserTime > 150){
         laserTime = t;
         createLaser();
       }
@@ -520,7 +487,7 @@ $(function(){
       ctx.drawImage($("#player")[0], player.x, player.y, player.size, player.size)
 
       if(!enemyArray.length && gameState !== LEVELDISPLAY){
-        // nextLevel();
+        nextLevel();
       }
       enemyArray.forEach(updateEnemyPos);
       enemyArray.forEach(function(i){
@@ -563,7 +530,7 @@ $(function(){
       $("#pausemenu").hide();
       $("#topright").hide();
       $("#pause").text("Pause");
-      ctx.drawImage($("#background")[0], 0, 0, canvas.width, canvas.height);
+      ctx.drawImage($("#background")[0], 0, 0, canvas.width, canvas.height)
       ctx.font = "150px arial";
       ctx.fillStyle = "rgba(255,255,255,1)";
       ctx.textAlign = "center";
