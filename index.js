@@ -33,9 +33,7 @@ $(function(){
   let gameState = MENU;
   let beforePausedState;
   
-  setTimeout(function(){
-      $("#video").hide();   
-  }, 1000*60);
+  $("#video").on("ended",function(){ $(this).hide(); });
   
   function init(){
       level=1;
