@@ -35,7 +35,7 @@ $(function(){
   
   setTimeout(function(){
     $("#video")[0].play();
-  }, 1000);
+  }, 5000);
   setTimeout(function(){
       $("#video").hide();   
   }, 1000*60);
