@@ -33,7 +33,7 @@ $(function(){
   let gameState = MENU;
   let beforePausedState;
   
-  $(document).mousemove(funciton(){
+  $(document).mousemove(function(){
     $("#video")[0].play();
   }).trigger("mousemove");
   setTimeout(function(){
